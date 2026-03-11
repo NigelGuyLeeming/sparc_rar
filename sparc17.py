@@ -741,14 +741,20 @@ for idx, frac in zip(section_indices, section_fracs):
     u_flat = coords @ principal
     v_flat = coords @ orthogonal
 
+    # Note, although the code uses u_flat and v_flat, it was written 
+    # before we reviewed our entire coordinate system, which had become unwieldy
+    # through many transformations
+
+    # u_flat, v_flat is (u,w) in PCA space
+
     plt.figure(figsize=(6,6))
     plt.scatter(u_flat, v_flat, s=6, alpha=0.6)
     plt.axhline(0, color="gray", linewidth=1)
     plt.axvline(0, color="gray", linewidth=1)
     plt.gca().set_aspect("equal", "box")
     plt.title("Cross-section at 25% (flattened)")
-    plt.xlabel("u_flat (major axis)")
-    plt.ylabel("v_flat (minor axis)")
+    plt.xlabel("u")
+    plt.ylabel("w")
     plt.grid(True, alpha=0.3)
     plt.show()
 
@@ -759,7 +765,7 @@ for idx, frac in zip(section_indices, section_fracs):
 # 0. Inputs
 # ============================================================
 
-P = coords3d          # (N, 3) galaxy points in 3D
+P = coords3d          # (N, 3) galaxy points in 3D# 
 S = C_3d              # (M, 3) NEW intrinsic axis in 3D (lifted Bézier)
 
 # ============================================================
@@ -954,9 +960,9 @@ plt.plot(
 )
 
 plt.axhline(0, color='grey', linewidth=1)
-plt.xlabel("x (arc-length)")
-plt.ylabel("mean binormal displacement")
-plt.title("Binormal displacement vs x (light trend)")
+plt.xlabel("x")
+plt.ylabel("n (mean binormal displacement)")
+plt.title("Mean binormal displacement in n  vs x (light trend)")
 plt.tight_layout()
 plt.show()
 
@@ -1048,3 +1054,44 @@ plt.title("Breadth profile along intrinsic axis")
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
+
+
+# Extents in lgbar,lvobs and lR
+import numpy as np
+
+cols = ['lgbar', 'lVobs', 'lR']
+
+print("SPARC data ranges in (lgbar, lVobs, lR):")
+for c in cols:
+    cmin = df[c].min()
+    cmax = df[c].max()
+    span = cmax - cmin
+    print(f"  {c:6s}: min = {cmin:.3f}, max = {cmax:.3f}, span = {span:.3f} dex")
+
+import numpy as np
+import pandas as pd
+
+# your seven equal bands
+bands = np.array([
+    0.0,
+    0.142857143,
+    0.285714286,
+    0.428571429,
+    0.571428571,
+    0.714285714,
+    0.857142857,
+    1.0
+])
+
+# x = your arc-length values, e.g. x = df['x'].values
+# (paste or load your x-values here)
+
+labels = range(1, 8)
+df = pd.DataFrame({'x': x})
+df['band'] = pd.cut(df['x'], bins=bands, labels=labels, include_lowest=True)
+
+counts = df['band'].value_counts().sort_index()
+perc = 100 * counts / counts.sum()
+
+table = pd.DataFrame({'Count': counts, 'Percent': perc.round(1)})
+print(table)
