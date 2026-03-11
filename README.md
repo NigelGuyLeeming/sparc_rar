@@ -5,5 +5,11 @@ Preliminary
 
 To support the papers posted to Figshare by Nigel Leeming on interpreting the SPARC RAR
 
+To run the code, 
+
+python sparc17.py
+
+with sparc_rarplus.csv in the same folder as the python code.
+
 
 
