@@ -11,5 +11,7 @@ python sparc17.py
 
 with sparc_rarplus.csv in the same folder as the python code.
 
-
+python installs:
+pip install scikit-learn
+mpl_toolkits is part of matplotlib
 
